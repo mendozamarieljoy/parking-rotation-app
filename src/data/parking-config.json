@@ -50,11 +50,14 @@
     { "month": 6, "day": 12, "holidayName": "Independence Day" },
     { "month": 8, "day": 21, "holidayName": "Ninoy Aquino Day" },
     { "month": 8, "day": 31, "holidayName": "National Heroes Day" },
+    { "month": 11, "day": 2, "holidayName": "All Soul's day" },
     { "month": 11, "day": 16, "holidayName": "49th ASEAN Summit" },
     { "month": 11, "day": 17, "holidayName": "49th ASEAN Summit" },
     { "month": 11, "day": 18, "holidayName": "49th ASEAN Summit" },
+    { "month": 12, "day": 24, "holidayName": "Christmas Eve" },
     { "month": 12, "day": 25, "holidayName": "Christmas Day" },
-    { "month": 12, "day": 30, "holidayName": "Rizal Day" }
+    { "month": 12, "day": 30, "holidayName": "Rizal Day" },
+    { "month": 12, "day": 31, "holidayName": "New Year's Eve" }
   ],
   "parkingFee": {
     "baseHours": 3,
@@ -93,7 +96,10 @@
       {
         "slots": ["27", "28"],
         "weekdays": [0, 1, 2, 3, 4],
-        "forbiddenPairs": [["Nes", "Marvs"], ["Raph", "Marvs"]]
+        "forbiddenPairs": [
+          ["Nes", "Marvs"],
+          ["Raph", "Marvs"]
+        ]
       },
       {
         "slots": ["27", "28"],
