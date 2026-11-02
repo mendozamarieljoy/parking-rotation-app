@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AccountRole {
+  ADMIN
+  MEMBER
+}
+
+enum HolidayType {
+  EXACT
+  ANNUAL
+}
+
+model Account {
+  id           String      @id @default(cuid())
+  email        String      @unique
+  name         String
+  passwordHash String
+  role         AccountRole @default(MEMBER)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  sessions     Session[]
+  holidayAudit HolidayAudit[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  accountId String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+  @@index([expiresAt])
+}
+
+model Holiday {
+  id          String      @id @default(cuid())
+  name        String
+  type        HolidayType
+  date        DateTime?   @db.Date
+  month       Int?
+  day         Int?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  auditEvents HolidayAudit[]
+
+  @@index([date])
+  @@index([month, day])
+}
+
+model HolidayAudit {
+  id        String   @id @default(cuid())
+  action    String
+  holidayId String?
+  actorId   String
+  snapshot  Json
+  createdAt DateTime @default(now())
+  holiday   Holiday? @relation(fields: [holidayId], references: [id], onDelete: SetNull)
+  actor     Account  @relation(fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([holidayId])
+  @@index([actorId, createdAt])
+}

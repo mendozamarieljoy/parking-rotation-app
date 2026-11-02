@@ -26,7 +26,13 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## Parking configuration
 
-Static parking data and settings live in `src/data/parking-config.json`, including the roster, availability, holidays, colors, fee assumptions, and scheduling rules. The app imports this file at build time; changes require a rebuild and redeployment. It does not provide runtime editing or backend storage.
+Static parking data and settings live in `src/data/parking-config.json`, including the roster, availability defaults, colors, fee assumptions, and scheduling rules. Those settings are imported at build time. Runtime holiday management is backed by PostgreSQL as described below; the scheduling roster remains static.
+
+## Backend setup
+
+Set `DATABASE_URL` to a PostgreSQL connection string and `SESSION_TOKEN_PEPPER` to a random secret of at least 32 characters (see `.env.example`). Apply migrations with `npm run db:migrate`, then provision an admin with `npm run admin:create -- admin@example.com "Admin Name"`; the command prompts for a hidden password. For non-interactive provisioning, provide `ADMIN_INITIAL_PASSWORD` through the runtime environment. Admin passwords are hashed; session tokens are random, stored hashed in the database, and sent in an HTTP-only cookie. Keep the environment secrets server-side.
+
+The holiday API exposes public reads at `/api/holidays`; admin-only create, update, and delete operations are available at `/api/holidays` and `/api/holidays/[id]`. Admin sign-in and management are at `/admin/login` and `/admin/holidays`. The database migration seeds the existing configured holidays as editable annual holiday records.
 
 ## Learn More
 

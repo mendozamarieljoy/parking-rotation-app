@@ -1,5 +1,6 @@
 import { parkingConfig } from "./config";
 import { User } from "./types";
+import { getRuntimeHolidays } from "./runtime-holidays";
 
 export function getDaysInMonth(year: number, month: number): Date[] {
   const days: Date[] = [];
@@ -37,16 +38,19 @@ export function calculateBenefitScore(primary: number, backup: number): number {
 export function isHoliday(date: Date): boolean {
   const month = date.getMonth() + 1; // 1-based
   const day = date.getDate();
-  return parkingConfig.holidays.some((h) => h.month === month && h.day === day);
+  const year = date.getFullYear();
+  return getRuntimeHolidays().some((holiday) => holiday.type === "ANNUAL"
+      ? holiday.month === month && holiday.day === day
+      : holiday.date === `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`);
 }
 
 export function getHolidayName(date: Date): string | null {
   const month = date.getMonth() + 1;
   const day = date.getDate();
-  const holiday = parkingConfig.holidays.find(
-    (h) => h.month === month && h.day === day,
-  );
-  return holiday ? holiday.holidayName : null;
+  const holiday = getRuntimeHolidays().find((item) => item.type === "ANNUAL"
+    ? item.month === month && item.day === day
+    : item.date === `${date.getFullYear()}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`);
+  return holiday?.name ?? null;
 }
 
 export function isWeekend(date: Date): boolean {

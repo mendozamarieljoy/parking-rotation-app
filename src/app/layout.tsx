@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Analytics } from "@vercel/analytics/next";
+import HolidaySync from "@/components/HolidaySync";
 
 const sans = Inter({
   subsets: ["latin"],
@@ -32,6 +33,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <div className="min-h-screen flex flex-col bg-zinc-100">
+          <HolidaySync />
           <Header />
           <div className="h-full">{children}</div>
           <Footer />

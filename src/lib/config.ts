@@ -19,7 +19,6 @@ type ParkingConfig = {
     }
   >;
   ownerColors: UserColors;
-  holidays: { month: number; day: number; holidayName: string }[];
   parkingFee: {
     baseHours: number;
     baseFee: number;

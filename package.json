@@ -6,13 +6,19 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "admin:create": "tsx scripts/create-admin.ts"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.0",
     "@vercel/analytics": "^2.0.1",
+    "bcryptjs": "^3.0.3",
     "dayjs": "^1.11.20",
     "modern-screenshot": "^4.6.8",
     "next": "16.2.2",
+    "prisma": "^6.19.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "zustand": "^5.0.12"
@@ -27,6 +33,12 @@
     "eslint-config-next": "16.2.2",
     "postcss": "^8.5.13",
     "tailwindcss": "^4.2.4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
+  },
+  "allowScripts": {
+    "@prisma/client@6.19.0": true,
+    "prisma@6.19.0": true,
+    "@prisma/engines@6.19.0": true
   }
 }

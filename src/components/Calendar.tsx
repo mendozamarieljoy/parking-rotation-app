@@ -1,15 +1,12 @@
 "use client";
 
 import { useParkingStore } from "@/lib/store";
-import { DaySchedule, Slot } from "@/lib/types";
+import { Slot } from "@/lib/types";
 
 import dayjs from "dayjs";
-import timezone from "dayjs/plugin/timezone";
-import utc from "dayjs/plugin/utc";
 import { Fragment, useState } from "react";
 import Modal from "./Modal";
 import { getNext12Months } from "@/lib/utils";
-import ParkingSlot from "./ParkingSlot";
 import ParkingSlotWrapper from "./ParkingSlotWrapper";
 import SchedulerControls from "./SchedulerControls";
 import FilterByUser from "./FilterByUser";
@@ -19,12 +16,10 @@ export default function Calendar() {
   const availableMonths = getNext12Months();
 
   const {
-    schedule,
     skipPrimary,
     setDate,
     selectedMonth,
     selectedYear,
-    regenerateSchedule,
   } = useParkingStore();
 
   const [toSkipSlot, setToSkipSlot] = useState<{
