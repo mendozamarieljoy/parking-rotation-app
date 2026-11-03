@@ -45,6 +45,8 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Vercel
 
+Holiday storage requires a reachable PostgreSQL database. Add `DATABASE_URL` to the Vercel project's Environment Variables for each environment you deploy to, then run `npm run db:migrate` against that same database before testing `/api/holidays`. For admin sign-in and management, also configure `SESSION_TOKEN_PEPPER` as described above. Redeploy after changing environment variables. If the endpoint still returns `Holiday storage is unavailable`, check the Vercel function logs for the database error.
+
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

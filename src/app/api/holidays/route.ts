@@ -6,7 +6,8 @@ import { holidayDateFields, listHolidays } from "@/lib/holiday-data";
 export async function GET() {
   try {
     return Response.json(await listHolidays());
-  } catch {
+  } catch (error) {
+    console.error("GET /api/holidays failed:", error);
     return Response.json({ error: "Holiday storage is unavailable" }, { status: 503 });
   }
 }
@@ -30,7 +31,8 @@ export async function POST(request: NextRequest) {
       return created;
     });
     return Response.json(holiday, { status: 201 });
-  } catch {
+  } catch (error) {
+    console.error("POST /api/holidays failed:", error);
     return Response.json({ error: "Holiday storage is unavailable" }, { status: 503 });
   }
 }
