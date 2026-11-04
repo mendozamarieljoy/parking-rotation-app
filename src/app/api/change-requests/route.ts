@@ -88,11 +88,26 @@ async function gh(path: string, token: string, init?: RequestInit) {
       ...init?.headers,
     },
   });
-  if (!response.ok)
+  const responseText = await response.text();
+  let payload: unknown;
+  try {
+    payload = JSON.parse(responseText);
+  } catch (error) {
+    if (!(error instanceof SyntaxError)) throw error;
+  }
+  if (!response.ok) {
+    const message =
+      payload &&
+      typeof payload === "object" &&
+      "message" in payload &&
+      typeof payload.message === "string"
+        ? payload.message
+        : "No error message returned.";
     throw new Error(
-      `GitHub request failed (${response.status}). Check the app credentials and repository permissions.`,
+      `GitHub ${init?.method ?? "GET"} ${path} failed (${response.status}): ${message}`,
     );
-  return response.json();
+  }
+  return payload;
 }
 
 function base64url(value: string | Buffer) {
