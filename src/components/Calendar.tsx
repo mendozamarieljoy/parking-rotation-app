@@ -125,7 +125,7 @@ export default function Calendar() {
             return (
               <div
                 key={index}
-                className={`min-h-32 ${date && `${bgColor} p-4 border border-slate-200 shadow rounded-lg`}`}
+                className={`min-h-32 ${date && `${bgColor} p-4 border border-slate-200 shadow rounded-lg hover:ring-2 hover:ring-amber-200 hover:scale-105 transition-all duration-200`}`}
               >
                 {date && (
                   <>

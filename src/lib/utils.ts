@@ -1,5 +1,19 @@
 import { parkingConfig } from "./config";
 import { User } from "./types";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+export function getParkingDateKey(date: Date): string {
+  return dayjs(date).tz(parkingConfig.timezone).format("YYYY-MM-DD");
+}
+
+export function getParkingWeekday(date: Date): number {
+  return dayjs(date).tz(parkingConfig.timezone).day();
+}
 
 export function getDaysInMonth(year: number, month: number): Date[] {
   const days: Date[] = [];
@@ -12,8 +26,14 @@ export function getDaysInMonth(year: number, month: number): Date[] {
 }
 
 export function isAvailable(user: User, date: Date): boolean {
-  return !parkingConfig.users[user].unavailableWeekdays.includes(
-    date.getDay(),
+  const userConfig = parkingConfig.users[user];
+  const dateKey = getParkingDateKey(date);
+
+  return (
+    !userConfig.unavailableWeekdays.includes(getParkingWeekday(date)) &&
+    !(userConfig.unavailableDates ?? []).includes(dateKey) &&
+    (!userConfig.removeUserAfterDate ||
+      dateKey <= userConfig.removeUserAfterDate)
   );
 }
 

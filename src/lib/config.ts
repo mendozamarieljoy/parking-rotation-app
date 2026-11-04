@@ -15,6 +15,8 @@ type ParkingConfig = {
     {
       showInFilter: boolean;
       unavailableWeekdays: number[];
+      unavailableDates?: string[];
+      removeUserAfterDate?: string;
       colors: UserColors;
     }
   >;
@@ -39,11 +41,9 @@ type ParkingConfig = {
   fairness: {
     primaryWeight: number;
     backupWeight: number;
-    slot332Penalty: number;
     compositeRangeWeight: number;
     primaryRangeWeight: number;
     backupRangeWeight: number;
-    slot332RangeWeight: number;
   };
   scheduler: {
     rules: {

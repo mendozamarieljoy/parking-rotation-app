@@ -4,10 +4,9 @@ import {
   UserStats,
   CostStats,
   Slot,
-  User,
   DaySlots,
 } from "./types";
-import { generateSchedule } from "./scheduler";
+import { generateSchedule, UnavailableSlotsByDate } from "./scheduler";
 import { calculateFairnessScore, calculateBenefitScore } from "./utils";
 import { parkingConfig, usersList } from "./config";
 
@@ -65,7 +64,7 @@ function calculateCostStats(
   schedule: DaySchedule[],
   userStats: Record<string, UserStats>,
 ): Record<string, CostStats> {
-  const totalSlots = schedule.length * 3;
+  const totalSlots = schedule.length * 2;
   const costPerUser =
     (totalSlots * parkingConfig.costSimulation.costPerSlot) / usersList.length;
 
@@ -102,6 +101,17 @@ const initialUserStats = calculateUserStats(initialSchedule);
 const initialCostStats = calculateCostStats(initialSchedule, initialUserStats);
 const initialUsers: string[] = [];
 
+function getUnavailableSlotsByDate(
+  schedule: DaySchedule[],
+): UnavailableSlotsByDate {
+  return schedule.reduce<UnavailableSlotsByDate>((result, day) => {
+    if (day.unavailableSlots.length > 0) {
+      result[day.date] = [...day.unavailableSlots];
+    }
+    return result;
+  }, {});
+}
+
 export const useParkingStore = create<ParkingState>((set, get) => ({
   selectedYear: DEFAULT_YEAR,
   selectedMonth: DEFAULT_MONTH,
@@ -124,9 +134,13 @@ export const useParkingStore = create<ParkingState>((set, get) => ({
     });
   },
   regenerateSchedule: () => {
-    const { selectedYear, selectedMonth } = get();
+    const { selectedYear, selectedMonth, schedule } = get();
 
-    const newSchedule = generateSchedule(selectedYear, selectedMonth);
+    const newSchedule = generateSchedule(
+      selectedYear,
+      selectedMonth,
+      getUnavailableSlotsByDate(schedule),
+    );
     const newUserStats = calculateUserStats(newSchedule);
     const newCostStats = calculateCostStats(newSchedule, newUserStats);
 
@@ -137,94 +151,18 @@ export const useParkingStore = create<ParkingState>((set, get) => ({
     });
   },
   toggleUnavailableSlot: (date: string, slot: Slot) => {
-    const { schedule } = get();
+    const { schedule, selectedYear, selectedMonth } = get();
+    const unavailableSlotsByDate = getUnavailableSlotsByDate(schedule);
+    const unavailableSlots = unavailableSlotsByDate[date] ?? [];
+    unavailableSlotsByDate[date] = unavailableSlots.includes(slot)
+      ? unavailableSlots.filter((unavailableSlot) => unavailableSlot !== slot)
+      : [...unavailableSlots, slot];
 
-    // Find the current assignment and next day
-    const currentDayIndex = schedule.findIndex((d) => d.date === date);
-    const currentDay = schedule[currentDayIndex];
-    const currentAssignment = currentDay?.slots[slot];
-    const displacedPrimary = currentAssignment?.primary;
-    const displacedBackup = currentAssignment?.backup;
-
-    const modifiedSchedule = schedule.map((day) => {
-      if (day.date === date) {
-        const isUnavailable = day.unavailableSlots.includes(slot);
-        const newUnavailableSlots = isUnavailable
-          ? day.unavailableSlots.filter((s) => s !== slot)
-          : [...day.unavailableSlots, slot];
-        return { ...day, unavailableSlots: newUnavailableSlots };
-      }
-      return day;
-    });
-
-    // If making unavailable and we have displaced users, try to assign them to the next day
-    if (
-      displacedPrimary &&
-      displacedBackup &&
-      currentDayIndex >= 0 &&
-      currentDayIndex < schedule.length - 1
-    ) {
-      const nextDayIndex = currentDayIndex + 1;
-      const nextDay = modifiedSchedule[nextDayIndex];
-
-      // Try to assign displacedPrimary as primary on next day if possible
-      const nextDaySlots = Object.entries(nextDay.slots) as Array<
-        [Slot, { primary: string | null; backup: string | null }]
-      >;
-      let assignedPrimary = false;
-      let assignedBackup = false;
-
-      for (const [nextSlot, nextAssignment] of nextDaySlots) {
-        if (
-          !assignedPrimary &&
-          nextAssignment.primary &&
-          nextAssignment.backup
-        ) {
-          // Swap: make displacedPrimary the primary, move current primary to backup
-          modifiedSchedule[nextDayIndex].slots[nextSlot] = {
-            primary: displacedPrimary,
-            backup: nextAssignment.primary as User,
-          };
-          assignedPrimary = true;
-        }
-        if (!assignedBackup && nextAssignment.backup && assignedPrimary) {
-          // If we still need to assign backup, try to swap with another backup slot
-          if (
-            nextAssignment.backup !== displacedPrimary &&
-            modifiedSchedule[nextDayIndex].slots[nextSlot]
-          ) {
-            modifiedSchedule[nextDayIndex].slots[nextSlot] = {
-              ...modifiedSchedule[nextDayIndex].slots[nextSlot],
-              backup: displacedBackup,
-            };
-            assignedBackup = true;
-            break;
-          }
-        }
-      }
-    }
-
-    // Now regenerate to rebalance assignments using latest unavailable flags
-    let regenerated = generateSchedule(2026, 3).map((day) => {
-      const existing = modifiedSchedule.find((d) => d.date === day.date);
-      if (existing) {
-        return {
-          ...day,
-          unavailableSlots: existing.unavailableSlots,
-        };
-      }
-      return day;
-    });
-
-    // For unavailable slots, clear the assignment to null values
-    regenerated = regenerated.map((day) => {
-      if (day.unavailableSlots.length === 0) return day;
-      const updatedSlots = { ...day.slots };
-      day.unavailableSlots.forEach((s) => {
-        updatedSlots[s] = { primary: null, backup: null };
-      });
-      return { ...day, slots: updatedSlots };
-    });
+    const regenerated = generateSchedule(
+      selectedYear,
+      selectedMonth,
+      unavailableSlotsByDate,
+    );
 
     const newUserStats = calculateUserStats(regenerated);
     const newCostStats = calculateCostStats(regenerated, newUserStats);
@@ -291,7 +229,6 @@ export const useParkingStore = create<ParkingState>((set, get) => ({
     const { schedule } = get();
     const filteredSchedule = [...schedule].map((daySchedule) => {
       const updatedSlots: DaySlots = {
-        332: null,
         27: null,
         28: null,
       };

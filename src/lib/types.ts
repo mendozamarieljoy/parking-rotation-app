@@ -2,7 +2,7 @@ import type { User } from "./config";
 
 export type { User } from "./config";
 
-export type Slot = "332" | "27" | "28";
+export type Slot = "27" | "28";
 
 export type SlotAssignment = {
   primary: User | null;

@@ -4,37 +4,39 @@
     "Reubs": {
       "showInFilter": true,
       "unavailableWeekdays": [2],
+      "unavailableDates": ["2026-11-11", "2026-11-12", "2026-11-13"],
       "colors": { "border": "#6366f1", "text": "#4338ca" }
     },
     "Nes": {
       "showInFilter": true,
       "unavailableWeekdays": [3],
+      "unavailableDates": [],
       "colors": { "border": "#10b981", "text": "#047857" }
     },
     "Mariel": {
       "showInFilter": true,
       "unavailableWeekdays": [5],
+      "unavailableDates": [],
       "colors": { "border": "#ec4899", "text": "#be185d" }
     },
     "Raph": {
       "showInFilter": true,
       "unavailableWeekdays": [],
+      "unavailableDates": [],
+      "removeUserAfterDate": "2026-11-14",
       "colors": { "border": "#f59e0b", "text": "#b45309" }
     },
     "Lady": {
       "showInFilter": true,
       "unavailableWeekdays": [],
+      "unavailableDates": [],
       "colors": { "border": "#d946ef", "text": "#a21caf" }
     },
     "Marvs": {
       "showInFilter": true,
       "unavailableWeekdays": [],
+      "unavailableDates": [],
       "colors": { "border": "#8b5cf6", "text": "#6d28d9" }
-    },
-    "Erwin": {
-      "showInFilter": false,
-      "unavailableWeekdays": [],
-      "colors": { "border": "#0ea5e9", "text": "#0369a1" }
     }
   },
   "ownerColors": {
@@ -86,11 +88,9 @@
   "fairness": {
     "primaryWeight": 2,
     "backupWeight": 1,
-    "slot332Penalty": 1.5,
     "compositeRangeWeight": 1000,
     "primaryRangeWeight": 100,
-    "backupRangeWeight": 10,
-    "slot332RangeWeight": 1
+    "backupRangeWeight": 10
   },
   "scheduler": {
     "rules": [
@@ -130,11 +130,6 @@
       },
       {
         "slots": ["27", "28"],
-        "afterDateExclusive": "2026-05-19",
-        "forbiddenUsers": ["Erwin"]
-      },
-      {
-        "slots": ["27", "28"],
         "dates": ["2026-05-20"],
         "forbiddenUsers": ["Reubs"]
       },
@@ -145,6 +140,20 @@
       }
     ],
     "dateOverrides": [
+      {
+        "date": "2026-11-03",
+        "assignments": {
+          "27": { "primary": "Mariel", "backup": "Marvs" },
+          "28": { "primary": "Raph", "backup": "Lady" }
+        }
+      },
+      {
+        "date": "2026-11-04",
+        "assignments": {
+          "27": { "primary": "Raph", "backup": "Lady" },
+          "28": { "primary": "Mariel", "backup": "Marvs" }
+        }
+      },
       {
         "date": "2026-05-22",
         "assignments": {
