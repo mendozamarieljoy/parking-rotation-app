@@ -9,6 +9,7 @@ export default function Header() {
     { label: "Rules & Guidelines", href: "/parking/guidelines" },
     { label: "Schedule Today", href: "/parking/today" },
     { label: "Calendar", href: "/parking" },
+    { label: "Requests", href: "/parking/requests" },
   ];
 
   const isActive = (href: string) => {

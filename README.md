@@ -28,6 +28,22 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 Static parking data and settings live in `src/data/parking-config.json`, including the roster, availability, holidays, colors, fee assumptions, and scheduling rules. The app imports this file at build time; changes require a rebuild and redeployment. It does not provide runtime editing or backend storage.
 
+## Reviewable parking requests
+
+`/parking/requests` can submit swaps, blocked dates, holidays, roster changes, and scheduler rules. Each request creates a branch and pull request containing the required `parking-config.json` change. The schedule updates only after the pull request is merged and the site is redeployed.
+
+Set these server-only deployment secrets (never prefix them with `NEXT_PUBLIC_`):
+
+```text
+GITHUB_OWNER=your-github-owner
+GITHUB_REPO=your-repository-name
+GITHUB_APP_ID=123456
+GITHUB_APP_INSTALLATION_ID=12345678
+GITHUB_APP_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----"
+```
+
+The GitHub App requires **Contents** and **Pull requests** read/write repository permissions. `GITHUB_TOKEN` is also accepted for local development. Require pull-request approvals and enable auto-merge in the repository branch-protection rules to merge approved requests automatically. Add sign-in or another authorization check before exposing the request page outside the intended parking group.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
