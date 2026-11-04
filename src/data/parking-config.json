@@ -3,9 +3,18 @@
   "users": {
     "Reubs": {
       "showInFilter": true,
-      "unavailableWeekdays": [2],
-      "unavailableDates": ["2026-11-11", "2026-11-12", "2026-11-13"],
-      "colors": { "border": "#6366f1", "text": "#4338ca" }
+      "unavailableWeekdays": [
+        2
+      ],
+      "unavailableDates": [
+        "2026-11-11",
+        "2026-11-12",
+        "2026-11-13"
+      ],
+      "colors": {
+        "border": "#6366f1",
+        "text": "#4338ca"
+      }
     },
     "Nes": {
       "showInFilter": true,
@@ -19,7 +28,10 @@
         "2026-11-24",
         "2026-11-25"
       ],
-      "colors": { "border": "#10b981", "text": "#047857" }
+      "colors": {
+        "border": "#10b981",
+        "text": "#047857"
+      }
     },
     "Mariel": {
       "showInFilter": true,
@@ -31,26 +43,38 @@
         "2026-12-03",
         "2026-12-04"
       ],
-      "colors": { "border": "#ec4899", "text": "#be185d" }
+      "colors": {
+        "border": "#ec4899",
+        "text": "#be185d"
+      }
     },
     "Raph": {
       "showInFilter": true,
       "unavailableWeekdays": [],
       "unavailableDates": [],
       "removeUserAfterDate": "2026-11-14",
-      "colors": { "border": "#f59e0b", "text": "#b45309" }
+      "colors": {
+        "border": "#f59e0b",
+        "text": "#b45309"
+      }
     },
     "Lady": {
       "showInFilter": true,
       "unavailableWeekdays": [],
       "unavailableDates": [],
-      "colors": { "border": "#d946ef", "text": "#a21caf" }
+      "colors": {
+        "border": "#d946ef",
+        "text": "#a21caf"
+      }
     },
     "Marvs": {
       "showInFilter": true,
       "unavailableWeekdays": [],
       "unavailableDates": [],
-      "colors": { "border": "#8b5cf6", "text": "#6d28d9" }
+      "colors": {
+        "border": "#8b5cf6",
+        "text": "#6d28d9"
+      }
     }
   },
   "ownerColors": {
@@ -59,26 +83,91 @@
     "background": "#f1f5f9"
   },
   "holidays": [
-    { "month": 1, "day": 1, "holidayName": "New Year's Day" },
-    { "month": 4, "day": 9, "holidayName": "Araw ng Kagitingan" },
-    { "month": 5, "day": 1, "holidayName": "Labor Day" },
-    { "month": 5, "day": 27, "holidayName": "Eid'l Adha (Feast of Sacrifice)" },
-    { "month": 6, "day": 12, "holidayName": "Independence Day" },
-    { "month": 8, "day": 21, "holidayName": "Ninoy Aquino Day" },
-    { "month": 8, "day": 31, "holidayName": "National Heroes Day" },
-    { "month": 11, "day": 2, "holidayName": "All Soul's day" },
-    { "month": 11, "day": 16, "holidayName": "49th ASEAN Summit" },
-    { "month": 11, "day": 17, "holidayName": "49th ASEAN Summit" },
-    { "month": 11, "day": 18, "holidayName": "49th ASEAN Summit" },
+    {
+      "month": 1,
+      "day": 1,
+      "holidayName": "New Year's Day"
+    },
+    {
+      "month": 4,
+      "day": 9,
+      "holidayName": "Araw ng Kagitingan"
+    },
+    {
+      "month": 5,
+      "day": 1,
+      "holidayName": "Labor Day"
+    },
+    {
+      "month": 5,
+      "day": 27,
+      "holidayName": "Eid'l Adha (Feast of Sacrifice)"
+    },
+    {
+      "month": 6,
+      "day": 12,
+      "holidayName": "Independence Day"
+    },
+    {
+      "month": 8,
+      "day": 21,
+      "holidayName": "Ninoy Aquino Day"
+    },
+    {
+      "month": 8,
+      "day": 31,
+      "holidayName": "National Heroes Day"
+    },
+    {
+      "month": 11,
+      "day": 2,
+      "holidayName": "All Soul's day"
+    },
+    {
+      "month": 11,
+      "day": 16,
+      "holidayName": "49th ASEAN Summit"
+    },
+    {
+      "month": 11,
+      "day": 17,
+      "holidayName": "49th ASEAN Summit"
+    },
+    {
+      "month": 11,
+      "day": 18,
+      "holidayName": "49th ASEAN Summit"
+    },
     {
       "month": 12,
       "day": 8,
       "holidayName": "Feast of the Immaculate Conception of Mary"
     },
-    { "month": 12, "day": 24, "holidayName": "Christmas Eve" },
-    { "month": 12, "day": 25, "holidayName": "Christmas Day" },
-    { "month": 12, "day": 30, "holidayName": "Rizal Day" },
-    { "month": 12, "day": 31, "holidayName": "New Year's Eve" }
+    {
+      "month": 12,
+      "day": 24,
+      "holidayName": "Christmas Eve"
+    },
+    {
+      "month": 12,
+      "day": 25,
+      "holidayName": "Christmas Day"
+    },
+    {
+      "month": 12,
+      "day": 30,
+      "holidayName": "Rizal Day"
+    },
+    {
+      "month": 12,
+      "day": 31,
+      "holidayName": "New Year's Eve"
+    },
+    {
+      "month": 12,
+      "day": 7,
+      "holidayName": "MST YEP 2026"
+    }
   ],
   "parkingFee": {
     "baseHours": 3,
@@ -109,70 +198,162 @@
   "scheduler": {
     "rules": [
       {
-        "slots": ["27", "28"],
-        "forbiddenPairs": [["Nes", "Raph"]]
-      },
-      {
-        "slots": ["27", "28"],
-        "weekdays": [0, 1, 2, 3, 4],
+        "slots": [
+          "27",
+          "28"
+        ],
         "forbiddenPairs": [
-          ["Nes", "Marvs"],
-          ["Raph", "Marvs"]
+          [
+            "Nes",
+            "Raph"
+          ]
         ]
       },
       {
-        "slots": ["27", "28"],
-        "weekdays": [5],
+        "slots": [
+          "27",
+          "28"
+        ],
+        "weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
         "forbiddenPairs": [
-          ["Lady", "Marvs"],
-          ["Reubs", "Marvs"],
-          ["Erwin", "Marvs"]
+          [
+            "Nes",
+            "Marvs"
+          ],
+          [
+            "Raph",
+            "Marvs"
+          ]
         ]
       },
       {
-        "slots": ["27", "28"],
+        "slots": [
+          "27",
+          "28"
+        ],
+        "weekdays": [
+          5
+        ],
         "forbiddenPairs": [
-          ["Lady", "Reubs"],
-          ["Lady", "Erwin"],
-          ["Reubs", "Erwin"],
-          ["Mariel", "Reubs"]
+          [
+            "Lady",
+            "Marvs"
+          ],
+          [
+            "Reubs",
+            "Marvs"
+          ],
+          [
+            "Erwin",
+            "Marvs"
+          ]
         ]
       },
       {
-        "slots": ["27", "28"],
-        "forbiddenPairs": [["Mariel", "Lady"]]
+        "slots": [
+          "27",
+          "28"
+        ],
+        "forbiddenPairs": [
+          [
+            "Lady",
+            "Reubs"
+          ],
+          [
+            "Lady",
+            "Erwin"
+          ],
+          [
+            "Reubs",
+            "Erwin"
+          ],
+          [
+            "Mariel",
+            "Reubs"
+          ]
+        ]
       },
       {
-        "slots": ["27", "28"],
-        "dates": ["2026-05-20"],
-        "forbiddenUsers": ["Reubs"]
+        "slots": [
+          "27",
+          "28"
+        ],
+        "forbiddenPairs": [
+          [
+            "Mariel",
+            "Lady"
+          ]
+        ]
       },
       {
-        "slots": ["27", "28"],
-        "dates": ["2026-05-21"],
-        "forbiddenUsers": ["Nes"]
+        "slots": [
+          "27",
+          "28"
+        ],
+        "dates": [
+          "2026-05-20"
+        ],
+        "forbiddenUsers": [
+          "Reubs"
+        ]
+      },
+      {
+        "slots": [
+          "27",
+          "28"
+        ],
+        "dates": [
+          "2026-05-21"
+        ],
+        "forbiddenUsers": [
+          "Nes"
+        ]
       }
     ],
     "dateOverrides": [
       {
         "date": "2026-11-03",
         "assignments": {
-          "27": { "primary": "Mariel", "backup": "Marvs" },
-          "28": { "primary": "Raph", "backup": "Lady" }
+          "27": {
+            "primary": "Mariel",
+            "backup": "Marvs"
+          },
+          "28": {
+            "primary": "Raph",
+            "backup": "Lady"
+          }
         }
       },
       {
         "date": "2026-11-04",
         "assignments": {
-          "27": { "primary": "Raph", "backup": "Lady" },
-          "28": { "primary": "Mariel", "backup": "Marvs" }
+          "27": {
+            "primary": "Raph",
+            "backup": "Lady"
+          },
+          "28": {
+            "primary": "Mariel",
+            "backup": "Marvs"
+          }
         }
       },
       {
         "date": "2026-05-22",
         "assignments": {
-          "27": { "primary": "Mariel", "backup": null },
-          "28": { "primary": "Marvs", "backup": null }
+          "27": {
+            "primary": "Mariel",
+            "backup": null
+          },
+          "28": {
+            "primary": "Marvs",
+            "backup": null
+          }
         }
       }
     ]
