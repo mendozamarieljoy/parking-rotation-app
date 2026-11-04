@@ -54,6 +54,11 @@
     { "month": 11, "day": 16, "holidayName": "49th ASEAN Summit" },
     { "month": 11, "day": 17, "holidayName": "49th ASEAN Summit" },
     { "month": 11, "day": 18, "holidayName": "49th ASEAN Summit" },
+    {
+      "month": 12,
+      "day": 8,
+      "holidayName": "Feast of the Immaculate Conception of Mary"
+    },
     { "month": 12, "day": 24, "holidayName": "Christmas Eve" },
     { "month": 12, "day": 25, "holidayName": "Christmas Day" },
     { "month": 12, "day": 30, "holidayName": "Rizal Day" },
