@@ -9,14 +9,28 @@
     },
     "Nes": {
       "showInFilter": true,
-      "unavailableWeekdays": [3],
-      "unavailableDates": [],
+      "unavailableWeekdays": [],
+      "unavailableDates": [
+        "2026-11-19",
+        "2026-11-20",
+        "2026-11-21",
+        "2026-11-22",
+        "2026-11-23",
+        "2026-11-24",
+        "2026-11-25"
+      ],
       "colors": { "border": "#10b981", "text": "#047857" }
     },
     "Mariel": {
       "showInFilter": true,
-      "unavailableWeekdays": [5],
-      "unavailableDates": [],
+      "unavailableWeekdays": [],
+      "unavailableDates": [
+        "2026-11-27",
+        "2026-12-01",
+        "2026-12-02",
+        "2026-12-03",
+        "2026-12-04"
+      ],
       "colors": { "border": "#ec4899", "text": "#be185d" }
     },
     "Raph": {
