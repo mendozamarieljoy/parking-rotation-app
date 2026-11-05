@@ -356,7 +356,7 @@
         "assignments": {
           "27": {
             "primary": "Reubs",
-            "backup": "Marvs"
+            "backup": "Nes"
           },
           "28": {
             "primary": "Nes",
@@ -374,6 +374,19 @@
           "28": {
             "primary": "Lady",
             "backup": "Lady"
+          }
+        }
+      },
+      {
+        "date": "2026-11-13",
+        "assignments": {
+          "27": {
+            "primary": "Raph",
+            "backup": "Mariel"
+          },
+          "28": {
+            "primary": "Marvs",
+            "backup": "Marvs"
           }
         }
       }
