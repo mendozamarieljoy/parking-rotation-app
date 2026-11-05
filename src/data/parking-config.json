@@ -356,10 +356,10 @@
         "assignments": {
           "27": {
             "primary": "Reubs",
-            "backup": "Nes"
+            "backup": "Reubs"
           },
           "28": {
-            "primary": "Nes",
+            "primary": "Marvs",
             "backup": "Marvs"
           }
         }
@@ -385,8 +385,8 @@
             "backup": "Mariel"
           },
           "28": {
-            "primary": "Marvs",
-            "backup": "Marvs"
+            "primary": "Nes",
+            "backup": "Nes"
           }
         }
       }
