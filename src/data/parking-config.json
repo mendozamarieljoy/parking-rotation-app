@@ -162,6 +162,11 @@
       "month": 12,
       "day": 31,
       "holidayName": "New Year's Eve"
+    },
+    {
+      "month": 11,
+      "day": 19,
+      "holidayName": "Test"
     }
   ],
   "parkingFee": {
