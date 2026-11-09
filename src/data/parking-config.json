@@ -3,8 +3,14 @@
   "users": {
     "Reubs": {
       "showInFilter": true,
-      "unavailableWeekdays": [2],
-      "unavailableDates": ["2026-11-11", "2026-11-12", "2026-11-13"],
+      "unavailableWeekdays": [
+        2
+      ],
+      "unavailableDates": [
+        "2026-11-11",
+        "2026-11-12",
+        "2026-11-13"
+      ],
       "colors": {
         "border": "#6366f1",
         "text": "#4338ca"
@@ -187,48 +193,122 @@
   "scheduler": {
     "rules": [
       {
-        "slots": ["27", "28"],
-        "forbiddenPairs": [["Nes", "Raph"]]
-      },
-      {
-        "slots": ["27", "28"],
-        "weekdays": [0, 1, 2, 3, 4],
+        "slots": [
+          "27",
+          "28"
+        ],
         "forbiddenPairs": [
-          ["Nes", "Marvs"],
-          ["Raph", "Marvs"]
+          [
+            "Nes",
+            "Raph"
+          ]
         ]
       },
       {
-        "slots": ["27", "28"],
-        "weekdays": [5],
+        "slots": [
+          "27",
+          "28"
+        ],
+        "weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
         "forbiddenPairs": [
-          ["Lady", "Marvs"],
-          ["Reubs", "Marvs"],
-          ["Erwin", "Marvs"]
+          [
+            "Nes",
+            "Marvs"
+          ],
+          [
+            "Raph",
+            "Marvs"
+          ]
         ]
       },
       {
-        "slots": ["27", "28"],
+        "slots": [
+          "27",
+          "28"
+        ],
+        "weekdays": [
+          5
+        ],
         "forbiddenPairs": [
-          ["Lady", "Reubs"],
-          ["Lady", "Erwin"],
-          ["Reubs", "Erwin"],
-          ["Mariel", "Reubs"]
+          [
+            "Lady",
+            "Marvs"
+          ],
+          [
+            "Reubs",
+            "Marvs"
+          ],
+          [
+            "Erwin",
+            "Marvs"
+          ]
         ]
       },
       {
-        "slots": ["27", "28"],
-        "forbiddenPairs": [["Mariel", "Lady"]]
+        "slots": [
+          "27",
+          "28"
+        ],
+        "forbiddenPairs": [
+          [
+            "Lady",
+            "Reubs"
+          ],
+          [
+            "Lady",
+            "Erwin"
+          ],
+          [
+            "Reubs",
+            "Erwin"
+          ],
+          [
+            "Mariel",
+            "Reubs"
+          ]
+        ]
       },
       {
-        "slots": ["27", "28"],
-        "dates": ["2026-05-20"],
-        "forbiddenUsers": ["Reubs"]
+        "slots": [
+          "27",
+          "28"
+        ],
+        "forbiddenPairs": [
+          [
+            "Mariel",
+            "Lady"
+          ]
+        ]
       },
       {
-        "slots": ["27", "28"],
-        "dates": ["2026-05-21"],
-        "forbiddenUsers": ["Nes"]
+        "slots": [
+          "27",
+          "28"
+        ],
+        "dates": [
+          "2026-05-20"
+        ],
+        "forbiddenUsers": [
+          "Reubs"
+        ]
+      },
+      {
+        "slots": [
+          "27",
+          "28"
+        ],
+        "dates": [
+          "2026-05-21"
+        ],
+        "forbiddenUsers": [
+          "Nes"
+        ]
       }
     ],
     "dateOverrides": [
@@ -352,8 +432,27 @@
       {
         "date": "2026-11-11",
         "assignments": {
-          "27": { "primary": "Mariel", "backup": "Nes" },
-          "28": { "primary": "Marvs", "backup": "Lady" }
+          "27": {
+            "primary": "Mariel",
+            "backup": "Nes"
+          },
+          "28": {
+            "primary": "Marvs",
+            "backup": "Marvs"
+          }
+        }
+      },
+      {
+        "date": "2026-11-23",
+        "assignments": {
+          "27": {
+            "primary": "Reubs",
+            "backup": "Mariel"
+          },
+          "28": {
+            "primary": "Lady",
+            "backup": "Lady"
+          }
         }
       }
     ]
