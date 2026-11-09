@@ -2,6 +2,12 @@
 
 import { FormEvent, useState } from "react";
 import { usersList } from "@/lib/config";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import ManageSchedule from "./ManageSchedule";
+import ManageUsers from "./ManageUsers";
+import ManageHoliday from "./ManageHoliday";
+import BlockDates from "./BlockDates";
+import SwapRequest from "./SwapRequest";
 
 type RequestKind =
   | "swap"
@@ -9,12 +15,19 @@ type RequestKind =
   | "holiday"
   | "add-user"
   | "remove-user"
+  | "manage-user"
   | "scheduler-rule";
 
 type ToastState = {
   status: "success" | "error";
   message: string;
   url?: string;
+};
+
+type TabType = {
+  label: string;
+  kind: RequestKind;
+  content?: React.ReactNode;
 };
 
 const inputClass =
@@ -51,7 +64,9 @@ function DateListInput() {
 
 export default function RequestCenter() {
   const [toast, setToast] = useState<ToastState | null>(null);
-  const [submittingKind, setSubmittingKind] = useState<RequestKind | null>(null);
+  const [submittingKind, setSubmittingKind] = useState<RequestKind | null>(
+    null,
+  );
 
   async function submit(kind: RequestKind, event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -94,6 +109,47 @@ export default function RequestCenter() {
     }
   }
 
+  const tabs: TabType[] = [
+    { label: "Swap request", kind: "swap", content: <SwapRequest /> },
+    { label: "Block dates", kind: "block-dates", content: <BlockDates /> },
+    { label: "Holidays", kind: "holiday", content: <ManageHoliday /> },
+    { label: "Users", kind: "manage-user", content: <ManageUsers /> },
+    { label: "Schedule", kind: "scheduler-rule", content: <ManageSchedule /> },
+  ];
+
+  const [activeTab, setActiveTab] = useState<RequestKind>("swap");
+
+  return (
+    <main className="mx-auto w-full max-w-6xl p-6 space-y-4">
+      <div>
+        <h1 className="text-3xl font-bold text-slate-800">Parking requests</h1>
+        <p className="mt-2 text-slate-600">
+          Each submission opens a reviewable GitHub pull request. The schedule
+          changes only after that PR is merged.
+        </p>
+      </div>
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => setActiveTab(value as RequestKind)}
+        className="space-y-4"
+      >
+        <TabsList
+          variant="line"
+          className="flex items-start border max-w-full overflow-x-auto"
+        >
+          {tabs.map((tab: TabType) => (
+            <TabsTrigger key={tab.kind} value={tab.kind}>
+              {tab.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        <TabsContent value={activeTab}>
+          {tabs.find((tab) => tab.kind === activeTab)?.content}
+        </TabsContent>
+      </Tabs>
+    </main>
+  );
+
   return (
     <main className="mx-auto w-full max-w-6xl p-6">
       <div className="mb-6">
@@ -103,6 +159,7 @@ export default function RequestCenter() {
           changes only after that PR is merged.
         </p>
       </div>
+      ``
       {toast && (
         <div
           role={toast.status === "error" ? "alert" : "status"}
@@ -116,7 +173,9 @@ export default function RequestCenter() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="font-semibold">
-                {toast.status === "error" ? "Request failed" : "Request submitted"}
+                {toast.status === "error"
+                  ? "Request failed"
+                  : "Request submitted"}
               </p>
               <p className="mt-1">{toast.message}</p>
               {toast.url && (
