@@ -389,6 +389,32 @@
             "backup": "Nes"
           }
         }
+      },
+      {
+        "date": "2026-11-10",
+        "assignments": {
+          "27": {
+            "primary": "Nes",
+            "backup": "Mariel"
+          },
+          "28": {
+            "primary": "Marvs",
+            "backup": "Marvs"
+          }
+        }
+      },
+      {
+        "date": "2026-11-20",
+        "assignments": {
+          "27": {
+            "primary": "Reubs",
+            "backup": "Mariel"
+          },
+          "28": {
+            "primary": "Lady",
+            "backup": "Lady"
+          }
+        }
       }
     ]
   }
