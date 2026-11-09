@@ -45,7 +45,7 @@ export default function ParkingSlot({
       </div>
 
       <div
-        className="flex-1 flex flex-col items-center justify-center gap-1 border-dashed border-t-2 mx-2"
+        className="flex-1 flex flex-col items-center justify-center py-4 border-dashed border-t-2 mx-2"
         style={{
           borderColor: colors.border,
           color: colors.text,
@@ -67,13 +67,6 @@ export default function ParkingSlot({
           </p>
         )}
       </div>
-      {/* <button
-//           data-hide-export
-//           onClick={() => setToSkipSlot({ date, slot })}
-//           className="text-xs bg-slate-500 hover:bg-slate-600 text-white font-bold uppercase px-4 py-2 rounded"
-//         >
-//           Skip
-//         </button> */}
     </div>
   );
 }

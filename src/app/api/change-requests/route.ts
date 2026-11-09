@@ -32,6 +32,41 @@ type Config = {
 type Data = Record<string, unknown>;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const HEX = /^#[0-9a-fA-F]{6}$/;
+type RequestType =
+  | "swap"
+  | "block-dates"
+  | "holiday"
+  | "add-user"
+  | "remove-user"
+  | "scheduler-rule"
+  | "other";
+
+function requestType(body: string | null, title: string): RequestType {
+  const marker = body?.match(/<!-- parking-request-kind: ([a-z-]+) -->/)?.[1];
+  switch (marker) {
+    case "swap":
+    case "block-dates":
+    case "holiday":
+    case "add-user":
+    case "remove-user":
+    case "scheduler-rule":
+      return marker;
+  }
+  if (/^swap\b/i.test(title)) return "swap";
+  if (/^block\b/i.test(title)) return "block-dates";
+  if (/^add holiday:/i.test(title)) return "holiday";
+  if (/^add user:/i.test(title)) return "add-user";
+  if (/^remove\b/i.test(title)) return "remove-user";
+  if (/^add scheduler rule/i.test(title)) return "scheduler-rule";
+  return "other";
+}
+
+function isParkingRequest(body: string | null) {
+  return Boolean(
+    body?.includes("<!-- parking-request-kind:") ||
+      body?.includes("Submitted from the Parking Rotation System."),
+  );
+}
 
 function required(data: Data, key: string) {
   const value = data[key];
@@ -43,10 +78,18 @@ function optional(data: Data, key: string) {
   const value = data[key];
   return typeof value === "string" ? value.trim() : "";
 }
+function isValidDate(value: string) {
+  if (!ISO_DATE.test(value)) return false;
+  const date = new Date(`${value}T00:00:00.000Z`);
+  return (
+    !Number.isNaN(date.getTime()) &&
+    date.toISOString().slice(0, 10) === value
+  );
+}
 function validDate(data: Data, key: string, isRequired = true) {
   const value = isRequired ? required(data, key) : optional(data, key);
   if (!value && !isRequired) return value;
-  if (!ISO_DATE.test(value) || Number.isNaN(Date.parse(`${value}T00:00:00Z`)))
+  if (!isValidDate(value))
     throw new Error(`${key} must be a valid date.`);
   return value;
 }
@@ -81,6 +124,7 @@ function decoded(content: string) {
 async function gh(path: string, token: string, init?: RequestInit) {
   const response = await fetch(`https://api.github.com${path}`, {
     ...init,
+    cache: "no-store",
     headers: {
       Accept: "application/vnd.github+json",
       Authorization: `Bearer ${token}`,
@@ -145,15 +189,17 @@ async function githubToken() {
 }
 
 function overrideFor(config: Config, date: string) {
+  const parsed = new Date(`${date}T00:00:00.000Z`);
+  const day = generateSchedule(
+    parsed.getUTCFullYear(),
+    parsed.getUTCMonth(),
+  ).find((item) => item.date === date);
+  if (!day) throw new Error(`${date} is not a schedulable weekday.`);
+
   const existing = config.scheduler.dateOverrides.find(
     (item) => item.date === date,
   );
   if (existing) return existing;
-  const parsed = new Date(`${date}T00:00:00`);
-  const day = generateSchedule(parsed.getFullYear(), parsed.getMonth()).find(
-    (item) => item.date === date,
-  );
-  if (!day) throw new Error(`${date} is not a schedulable weekday.`);
   const assignments: Record<string, Assignment> = {};
   for (const slot of ["27", "28"]) {
     const assignment = day.slots[slot as "27" | "28"];
@@ -301,6 +347,193 @@ function apply(config: Config, kind: string, data: Data) {
   throw new Error("Unsupported request type.");
 }
 
+function pullRequestBody(
+  config: Config,
+  kind: string,
+  data: Data,
+  title: string,
+) {
+  const inline = (value: string) =>
+    `\`${value.replace(/\\/g, "\\\\").replace(/`/g, "\\`")}\``;
+  const detail = (label: string, value: string) =>
+    `- **${label}:** ${inline(value)}`;
+  const weekdays = (key: string) => {
+    const names = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    return array(data, key)
+      .map(Number)
+      .map((day) => names[day])
+      .join(", ");
+  };
+  let details: string[];
+
+  switch (kind) {
+    case "swap": {
+      const fromDate = required(data, "fromDate");
+      const toDate = required(data, "toDate");
+      const fromUser = required(data, "fromUser");
+      const toUser = required(data, "toUser");
+      const resultingAssignments = [fromDate, toDate].flatMap((date) => {
+        const override = config.scheduler.dateOverrides.find(
+          (item) => item.date === date,
+        );
+        if (!override) return [];
+        return Object.entries(override.assignments).map(
+          ([slot, assignment]) =>
+            `- ${inline(date)}, slot ${inline(slot)}: primary ${inline(assignment.primary ?? "None")}, backup ${inline(assignment.backup ?? "None")}`,
+        );
+      });
+      details = [
+        detail("First date and user", `${fromDate} — ${fromUser}`),
+        detail("Second date and user", `${toDate} — ${toUser}`),
+        `**Resulting assignments**\n${resultingAssignments.join("\n")}`,
+      ];
+      break;
+    }
+    case "block-dates": {
+      const startDate = required(data, "startDate");
+      const endDate = optional(data, "endDate") || startDate;
+      const extraDates = optional(data, "dates")
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
+      details = [
+        detail("User", required(data, "user")),
+        detail("Blocked date range", `${startDate} through ${endDate}`),
+        ...(extraDates.length
+          ? [detail("Additional dates", extraDates.join(", "))]
+          : []),
+      ];
+      break;
+    }
+    case "holiday":
+      details = [
+        detail("Holiday", required(data, "name")),
+        detail("Date", validDate(data, "date")),
+      ];
+      break;
+    case "add-user": {
+      const unavailableWeekdays = weekdays("weekdays");
+      details = [
+        detail("User", required(data, "name")),
+        detail(
+          "Unavailable weekdays",
+          unavailableWeekdays || "None",
+        ),
+        detail("Border color", required(data, "borderColor")),
+        detail("Text color", required(data, "textColor")),
+      ];
+      break;
+    }
+    case "remove-user":
+      details =
+        data.entirely === "on"
+          ? [
+              detail("User", required(data, "user")),
+              "- **Removal:** Entirely, including existing assignments and scheduler rules",
+            ]
+          : [
+              detail("User", required(data, "user")),
+              detail("Remove after", validDate(data, "removeAfterDate")),
+            ];
+      break;
+    case "scheduler-rule": {
+      const selectedWeekdays = weekdays("weekdays");
+      details = [
+        detail("Affected slots", array(data, "slots").join(", ")),
+        detail("Restricted user pair", array(data, "pairUsers").join(" and ")),
+        detail("Applies on", selectedWeekdays || "Every day"),
+      ];
+      break;
+    }
+    default:
+      throw new Error("Unsupported request type.");
+  }
+
+  return [
+    "## Summary",
+    inline(title),
+    "",
+    "## Change details",
+    ...details,
+    "",
+    "## Review",
+    "Review the requested configuration changes in `src/data/parking-config.json`. The schedule changes only after this pull request is merged.",
+    "",
+    "_Submitted from the Parking Rotation System._",
+    "",
+    `<!-- parking-request-kind: ${kind} -->`,
+  ].join("\n");
+}
+
+export async function GET() {
+  try {
+    const token = await githubToken();
+    const owner = process.env.GITHUB_OWNER;
+    const repo = process.env.GITHUB_REPO;
+    if (!token || !owner || !repo)
+      return NextResponse.json(
+        {
+          error:
+            "GitHub integration is not configured. Set GITHUB_OWNER, GITHUB_REPO, and GitHub App credentials.",
+        },
+        { status: 503 },
+      );
+
+    const pulls = (await gh(
+      `/repos/${owner}/${repo}/pulls?state=all&sort=created&direction=desc&per_page=100`,
+      token,
+    )) as Array<{
+      number: number;
+      title: string;
+      html_url: string;
+      state: "open" | "closed";
+      draft: boolean;
+      created_at: string;
+      merged_at: string | null;
+      body: string | null;
+    }>;
+    if (!Array.isArray(pulls))
+      throw new Error("GitHub returned an invalid pull request list.");
+
+    return NextResponse.json({
+      requests: pulls
+        .filter((pull) => isParkingRequest(pull.body))
+        .map((pull) => ({
+          number: pull.number,
+          title: pull.title,
+          url: pull.html_url,
+          type: requestType(pull.body, pull.title),
+          status: pull.merged_at
+            ? "merged"
+            : pull.state === "closed"
+              ? "closed"
+              : pull.draft
+                ? "draft"
+                : "open",
+          createdAt: pull.created_at,
+        })),
+    });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unable to retrieve pull requests.",
+      },
+      { status: 502 },
+    );
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const token = await githubToken();
@@ -366,7 +599,7 @@ export async function POST(request: Request) {
         title,
         head: branch,
         base: repoInfo.default_branch,
-        body: "Submitted from the Parking Rotation System. Review this configuration change before merging.",
+        body: pullRequestBody(config, body.kind, body.data as Data, title),
       }),
     })) as { html_url: string };
     return NextResponse.json({ url: pr.html_url });
