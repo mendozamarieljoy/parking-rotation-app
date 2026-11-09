@@ -242,16 +242,20 @@ export function generateSchedule(
           ? strictCandidate
           : fallbackCandidate;
 
-      let daySlots = bestCandidate?.slots ?? { 27: null, 28: null };
-      daySlots = applyDateOverride(daySlots, dateKey);
+      const generatedSlots = bestCandidate?.slots ?? { 27: null, 28: null };
       unavailableSlots.forEach((slot) => {
-        daySlots[slot] = null;
+        generatedSlots[slot] = null;
       });
 
-      Object.values(daySlots).forEach((assignment) => {
+      Object.values(generatedSlots).forEach((assignment) => {
         if (!assignment) return;
         if (assignment.primary) userStats[assignment.primary].primary += 1;
         if (assignment.backup) userStats[assignment.backup].backup += 1;
+      });
+
+      const daySlots = applyDateOverride(generatedSlots, dateKey);
+      unavailableSlots.forEach((slot) => {
+        daySlots[slot] = null;
       });
 
       return {
