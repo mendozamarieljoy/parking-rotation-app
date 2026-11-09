@@ -447,11 +447,24 @@
         "assignments": {
           "27": {
             "primary": "Reubs",
-            "backup": "Mariel"
+            "backup": "Lady"
           },
           "28": {
             "primary": "Lady",
             "backup": "Lady"
+          }
+        }
+      },
+      {
+        "date": "2026-11-27",
+        "assignments": {
+          "27": {
+            "primary": "Reubs",
+            "backup": "Nes"
+          },
+          "28": {
+            "primary": "Mariel",
+            "backup": "Marvs"
           }
         }
       }
