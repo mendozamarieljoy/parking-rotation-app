@@ -15,36 +15,44 @@ export default function RequestsPage() {
       category: "Users requests",
       pages: [
         {
-          label: "Swap Request",
+          label: "Swap Schedule",
           description:
-            "Submit a request to swap your parking slot `with another user.",
+            "Request to exchange your assigned parking schedule with another user.",
           href: "/parking/requests/swap",
         },
         {
-          label: "Block dates",
-          description: "Block specific dates for parking slot usage.",
+          label: "Unavailable Dates",
+          description:
+            "Mark dates when you are unavailable for parking assignments.",
           href: "/parking/requests/block-dates",
         },
       ],
     },
     {
-      category: "Admin requests",
+      category: "Admin Management",
       pages: [
         {
-          label: "Holidays",
-          description: "View and manage holiday schedules for parking slots.",
+          label: "Holiday Management",
+          description:
+            "View and manage holidays that affect the parking rotation schedule.",
           href: "/parking/requests/holiday",
         },
         {
-          label: "Users",
-          description:
-            "Manage user accounts and permissions for the parking system.",
+          label: "User Management",
+          description: "Manage users for the parking system.",
           href: "/parking/requests/users",
         },
         {
-          label: "Schedule",
-          description: "View and manage the parking slot schedule.",
+          label: "Schedule Rules",
+          description:
+            "View and manage the rules that govern parking slot assignments and rotation schedules.",
           href: "/parking/requests/schedule",
+        },
+        {
+          label: "Pending Requests",
+          description:
+            "View submitted requests that are awaiting review, approval, or merging. Track their status and progress until the changes are applied.",
+          href: "/parking/requests/pending",
         },
       ],
     },
@@ -52,6 +60,17 @@ export default function RequestsPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <div>
+        <h1 className="text-4xl font-bold">Request center</h1>
+        <p>
+          Browse available requests and management tools for the parking
+          rotation system.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Submitted requests create a GitHub Pull Request for review. Changes
+          will only take effect after the Pull Request is approved and merged.
+        </p>
+      </div>
       {pages.map((section) => (
         <div key={section.category}>
           <h2 className="text-2xl font-bold mb-4">{section.category}</h2>

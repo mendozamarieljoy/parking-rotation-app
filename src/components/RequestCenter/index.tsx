@@ -119,36 +119,36 @@ export default function RequestCenter() {
 
   const [activeTab, setActiveTab] = useState<RequestKind>("swap");
 
-  return (
-    <main className="mx-auto w-full max-w-6xl p-6 space-y-4">
-      <div>
-        <h1 className="text-3xl font-bold text-slate-800">Parking requests</h1>
-        <p className="mt-2 text-slate-600">
-          Each submission opens a reviewable GitHub pull request. The schedule
-          changes only after that PR is merged.
-        </p>
-      </div>
-      <Tabs
-        value={activeTab}
-        onValueChange={(value) => setActiveTab(value as RequestKind)}
-        className="space-y-4"
-      >
-        <TabsList
-          variant="line"
-          className="flex items-start border max-w-full overflow-x-auto"
-        >
-          {tabs.map((tab: TabType) => (
-            <TabsTrigger key={tab.kind} value={tab.kind}>
-              {tab.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <TabsContent value={activeTab}>
-          {tabs.find((tab) => tab.kind === activeTab)?.content}
-        </TabsContent>
-      </Tabs>
-    </main>
-  );
+  // return (
+  //   <main className="mx-auto w-full max-w-6xl p-6 space-y-4">
+  //     <div>
+  //       <h1 className="text-3xl font-bold text-slate-800">Parking requests</h1>
+  //       <p className="mt-2 text-slate-600">
+  //         Each submission opens a reviewable GitHub pull request. The schedule
+  //         changes only after that PR is merged.
+  //       </p>
+  //     </div>
+  //     <Tabs
+  //       value={activeTab}
+  //       onValueChange={(value) => setActiveTab(value as RequestKind)}
+  //       className="space-y-4"
+  //     >
+  //       <TabsList
+  //         variant="line"
+  //         className="flex items-start border max-w-full overflow-x-auto"
+  //       >
+  //         {tabs.map((tab: TabType) => (
+  //           <TabsTrigger key={tab.kind} value={tab.kind}>
+  //             {tab.label}
+  //           </TabsTrigger>
+  //         ))}
+  //       </TabsList>
+  //       <TabsContent value={activeTab}>
+  //         {tabs.find((tab) => tab.kind === activeTab)?.content}
+  //       </TabsContent>
+  //     </Tabs>
+  //   </main>
+  // );
 
   return (
     <main className="mx-auto w-full max-w-6xl p-6">

@@ -33,7 +33,18 @@ import { toast } from "../ui/toast";
 import ParkingSlot from "../ParkingSlot";
 import { Slot } from "@/lib/types";
 import { isHoliday } from "@/lib/utils";
+import { parkingConfig } from "@/lib/config";
 import dayjs from "dayjs";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
+import Link from "next/link";
 
 type AssignedUser = {
   user: string;
@@ -76,6 +87,18 @@ async function loadAssignedUsers(date: string): Promise<AssignedUser[]> {
 }
 
 export default function SwapRequest() {
+  const overrideHistory = parkingConfig.scheduler.dateOverrides
+    .flatMap(({ date, assignments }) =>
+      (["27", "28"] as const)
+        .map((slot) => ({ date, slot, assignment: assignments[slot] }))
+        .filter((entry) => entry.assignment !== undefined),
+    )
+    .sort(
+      (left, right) =>
+        right.date.localeCompare(left.date) ||
+        Number(left.slot) - Number(right.slot),
+    );
+
   const [formData, setFormData] = useState({
     fromUser: "",
     fromDate: "",
@@ -90,6 +113,11 @@ export default function SwapRequest() {
     from: false,
     to: false,
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittedRequest, setSubmittedRequest] = useState<{
+    key: string;
+    url: string;
+  } | null>(null);
   const [preview, setPreview] = useState<{
     fromDate: string;
     fromUser: string;
@@ -299,14 +327,6 @@ export default function SwapRequest() {
     setUserLoadErrors((previous) => ({ ...previous, to: false }));
   };
 
-  const onSubmitSwapRequest = () => {
-    toast.add({
-      title: "Swap request submitted",
-      description: "Your swap request has been submitted successfully.",
-      type: "success",
-    });
-  };
-
   const activePreview =
     preview &&
     preview.fromDate === formData.fromDate &&
@@ -315,6 +335,53 @@ export default function SwapRequest() {
     preview.toUser === formData.toUser
       ? preview
       : null;
+
+  const onSubmitSwapRequest = async () => {
+    if (isSubmitting || !activePreview) return;
+
+    setIsSubmitting(true);
+    setSubmittedRequest(null);
+    try {
+      const response = await fetch("/api/change-requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "swap", data: formData }),
+      });
+      const result: unknown = await response.json();
+      if (!isRecord(result)) {
+        throw new Error("The server returned an invalid response.");
+      }
+      if (!response.ok) {
+        throw new Error(
+          typeof result.error === "string"
+            ? result.error
+            : "Unable to submit the swap request.",
+        );
+      }
+      if (typeof result.url !== "string") {
+        throw new Error("The server did not return the pull request URL.");
+      }
+
+      setSubmittedRequest({ key: previewKey, url: result.url });
+      toast.add({
+        title: "Swap request submitted",
+        description: "A pull request has been created for review.",
+        type: "success",
+      });
+    } catch (error) {
+      console.error("Error submitting swap request:", error);
+      toast.add({
+        title: "Swap request failed",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Unable to submit the swap request.",
+        type: "error",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const fromPreviewAssignment = activePreview
     ? {
@@ -346,15 +413,22 @@ export default function SwapRequest() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <Link
+        href="/parking/requests"
+        className="text-sm font-medium text-slate-600 hover:text-slate-900"
+      >
+        &larr; Request center
+      </Link>
       <Card>
         <CardHeader>
-          <CardTitle className="text-3xl font-bold">Swap Request</CardTitle>
+          <CardTitle className="text-xl md:text-3xl font-bold">
+            Swap Request
+          </CardTitle>
           <CardDescription>
-            Instructions: Please fill out the form below to submit your swap
-            request. Make sure to provide accurate information to ensure a
-            smooth process.
+            Request to exchange your assigned parking schedule with another
+            user. You can submit a swap request and track its approval status.
           </CardDescription>
-          <CardContent className="my-4">
+          <CardContent className="my-4 px-0">
             <form className="flex flex-col md:flex-row items-center gap-4">
               <Card className="w-full">
                 <CardContent className="flex flex-col md:flex-row items-start gap-4">
@@ -521,20 +595,39 @@ export default function SwapRequest() {
           </CardContent>
         </CardHeader>
         <CardFooter>
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={
-              Object.values(formData).some((value) => !value) ||
-              formData.fromDate === formData.toDate ||
-              formData.fromUser === formData.toUser
-            }
-            onClick={onSubmitSwapRequest}
-          >
-            Submit Request
-          </Button>
+          <div className="w-full space-y-3">
+            <Button
+              type="button"
+              className="w-full"
+              disabled={
+                isSubmitting ||
+                !activePreview ||
+                previewError?.key === previewKey ||
+                Object.values(formData).some((value) => !value) ||
+                formData.fromDate === formData.toDate ||
+                formData.fromUser === formData.toUser
+              }
+              onClick={onSubmitSwapRequest}
+            >
+              {isSubmitting ? "Submitting request..." : "Submit Request"}
+            </Button>
+            {submittedRequest?.key === previewKey && (
+              <p role="status" className="text-center text-sm">
+                Request submitted.{" "}
+                <a
+                  href={submittedRequest.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium text-blue-700 underline"
+                >
+                  Review the pull request
+                </a>
+              </p>
+            )}
+          </div>
         </CardFooter>
       </Card>
+
       {!Object.values(formData).some((value) => !value) && (
         <Card className="mt-4">
           <CardHeader>
@@ -605,6 +698,47 @@ export default function SwapRequest() {
           </CardHeader>
         </Card>
       )}
+      <Card className="mt-4">
+        <CardHeader>
+          <CardTitle>Override History</CardTitle>
+          <CardDescription>
+            Configured parking assignments, with the most recent dates first.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {overrideHistory.length ? (
+            <Table>
+              <TableCaption>
+                Current date overrides configured for the parking schedule.
+              </TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Slot</TableHead>
+                  <TableHead>Primary</TableHead>
+                  <TableHead>Backup</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {overrideHistory.map(({ date, slot, assignment }) => (
+                  <TableRow key={`${date}-${slot}`}>
+                    <TableCell>
+                      {format(parseISO(date), "MMM d, yyyy")}
+                    </TableCell>
+                    <TableCell>{slot}</TableCell>
+                    <TableCell>{assignment.primary ?? "—"}</TableCell>
+                    <TableCell>{assignment.backup ?? "—"}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <p className="py-6 text-center text-sm text-muted-foreground">
+              No date overrides have been configured yet.
+            </p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
