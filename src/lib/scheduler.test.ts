@@ -110,6 +110,32 @@ describe("generateSchedule", () => {
     });
   });
 
+  it("does not let a date override change assignments on other dates", () => {
+    parkingConfig.scheduler.dateOverrides = [];
+    const baseline = generateSchedule(2026, 10);
+    const selectedDate = "2026-11-03";
+    const selectedDay = baseline.find((day) => day.date === selectedDate)!;
+    const replacementUser = usersList.find(
+      (user) => user !== selectedDay.slots["27"]?.primary,
+    )!;
+
+    parkingConfig.scheduler.dateOverrides.push({
+      date: selectedDate,
+      assignments: {
+        "27": { primary: replacementUser, backup: null },
+      },
+    });
+
+    const overridden = generateSchedule(2026, 10);
+
+    expect(
+      overridden.find((day) => day.date === selectedDate)?.slots["27"],
+    ).toEqual({ primary: replacementUser, backup: null });
+    expect(
+      overridden.filter((day) => day.date !== selectedDate),
+    ).toEqual(baseline.filter((day) => day.date !== selectedDate));
+  });
+
   it("applies the November parking-slot overrides", () => {
     const schedule = generateSchedule(2026, 10);
 
